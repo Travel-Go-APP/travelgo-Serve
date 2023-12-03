@@ -22,7 +22,7 @@ public class Region {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "region")
+    @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
     private List<Place> places = new ArrayList<>();
 
     private String regionName;

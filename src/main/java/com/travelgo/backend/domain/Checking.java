@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Check {
+public enum Checking {
     Visited("방문"),
     Unvisited("미방문");
 

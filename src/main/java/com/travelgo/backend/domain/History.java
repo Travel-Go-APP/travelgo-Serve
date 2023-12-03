@@ -17,9 +17,9 @@ public class History {
     @Column(name = "history_id")
     private Long historyId;
 
-    @ManyToOne
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private LocalDate date;
 

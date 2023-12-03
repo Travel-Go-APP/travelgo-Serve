@@ -18,14 +18,13 @@ public class Review {
     @Column(name = "review_id")
     private Long reviewId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Place place;
 
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="user_id")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User reviewUser;
 
     @Max(value = 5)
     @Min(value = 0)

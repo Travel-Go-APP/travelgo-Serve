@@ -35,7 +35,7 @@ public class Place {
     private String explanation;
 
     @Enumerated(EnumType.STRING)
-    private Check check; //방문 확인
+    private Checking checking; //방문 확인
 
     private Double latitude; //위도
     private Double longitude; //경도
