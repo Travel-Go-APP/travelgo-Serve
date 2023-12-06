@@ -10,16 +10,16 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Ranking {
+public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ranking_id")
-    private Long rankingId;
+    @Column(name = "item_id")
+    private Long itemId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    private String itemImage;
 
-    private int userRank;
+    private String itemName;
+
+    private String itemDescription;
 }

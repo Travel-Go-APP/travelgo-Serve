@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -19,20 +20,18 @@ public class Review {
     private Long reviewId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_id")
-    private Place place;
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User reviewUser;
+    private User user;
 
-    @Max(value = 5)
-    @Min(value = 0)
+    @Max(value = 5) @Min(value = 0)
     private Float score;
 
+    @Lob
     private String reviewContent;
 
-    public void changReviewContent(String reviewContent){
-        this.reviewContent =reviewContent;
-    }
+    private LocalDateTime reviewTime;
 }

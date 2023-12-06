@@ -1,30 +1,30 @@
 package com.travelgo.backend.domain;
 
 import lombok.*;
+import java.util.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class History {
+public class Achievement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "history_id")
-    private Long historyId;
+    @Column(name = "achievement_id")
+    private Long achievementId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDate date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
-    private String scedule;
+    private Double achievementRate;
 
-    @Lob
-    private String note;
 }

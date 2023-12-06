@@ -4,10 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -21,27 +17,22 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @OneToMany(mappedBy = "reviewUser", cascade = CascadeType.ALL)
-    private List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<History> histories = new ArrayList<>();
-
-    @NotBlank(message = "이메일은 필수 입력 값입니다.")
-    @Email(message = "이메일 형식에 맞지 않습니다.")
-    private String email;
-
-    @NotBlank(message = "닉네임은 필수 입력 값입니다.")
+    @Column(nullable = false, length = 30, unique = true)
     private String nickname;
 
-    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,20}",
-            message = "비밀번호는 숫자,영문 대,소문자, 특수기호가 적어도 1개 이상씩 포함된 8자 ~ 20자의 비밀번호여야 합니다.")
+    @Column(nullable = false,length = 100)
     private String password;
 
-    private int level;
-    private int step;
-    private String scope;
+    @Column(nullable = false, length = 50, unique = true)
+    @Email
+    private String email;
 
+    private int experience;
+
+    private int workCount;
+
+    private int detectionRange;
+
+    private int level;
 
 }

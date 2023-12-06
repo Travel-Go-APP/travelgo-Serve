@@ -2,28 +2,30 @@ package com.travelgo.backend.domain;
 
 import lombok.*;
 
+import java.time.*;
+import java.util.*;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Region {
+public class Visit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "region_id")
-    private Long regionId;
+    @Column(name = "visit_id")
+    private Long visitId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
-    private List<Place> places = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
-    private String regionName;
+    private LocalDateTime visitTime;
 }
