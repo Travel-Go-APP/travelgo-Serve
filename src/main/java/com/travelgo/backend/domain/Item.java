@@ -17,6 +17,9 @@ public class Item {
     @Column(name = "item_id")
     private Long itemId;
 
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
+
     private String itemImage;
 
     private String itemName;
