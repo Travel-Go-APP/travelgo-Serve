@@ -17,11 +17,14 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(nullable = false, length = 50, unique = true) //카카오 아이디 저장 부분
+    private String kakaoId;
+
     @Column(nullable = false, length = 30, unique = true)
     private String nickname;
 
-    @Column(nullable = false,length = 100)
-    private String password;
+    //@Column(nullable = false,length = 100)
+    //private String password;
 
     @Column(nullable = false, length = 50, unique = true)
     @Email
