@@ -1,10 +1,12 @@
 package com.travelgo.backend.controller;
 
 import com.travelgo.backend.domain.User;
+import com.travelgo.backend.dto.CheckNicknameDTO;
 import com.travelgo.backend.dto.KakaoLoginRequestDTO;
 import com.travelgo.backend.dto.LoginDTO;
 import com.travelgo.backend.dto.SignUpDTO;
 import com.travelgo.backend.service.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,18 @@ public class UserController {
     }
 
     @PostMapping("/kakao-login")
+    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest){
+        if(userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())){
+            User user = userService.findByKakaoId(kakaoLoginRequest.getKakaoId());
+            LoginDTO loginDTO = new LoginDTO();
+            loginDTO.setKakaoId(user.getKakaoId());
+            return ResponseEntity.ok(loginDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
+    }
+
+    /*@PostMapping("/kakao-login")
     public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest) {
         if (userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())) {
             // 등록돼 있지 않은 사용자 회원가입 처리
@@ -47,6 +61,17 @@ public class UserController {
             LoginDTO loginDTO = new LoginDTO();
             loginDTO.setKakaoId(user.getKakaoId());
             return ResponseEntity.ok(loginDTO);
+        }
+    }*/
+
+    @PostMapping("/check-nickname")
+    public ResponseEntity<?> checkNickname(@RequestBody CheckNicknameDTO checkNicknameDTO){
+        if (userService.hasDuplicateNickname(checkNicknameDTO.getNickname())){
+            // 이미 존재하는 닉네임
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else {
+            // 신규 닉네임
+            return ResponseEntity.ok().build();
         }
     }
 }

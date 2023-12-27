@@ -39,8 +39,15 @@ public class UserService {
     public boolean hasDuplicateKakaoId(String kakaoId){
         if (userRepository.findByKakaoId(kakaoId) != null){
             new IllegalStateException("이미 존재하는 카카오 아이디입니다.");
-            return false; // 이미 등록된 회원일 때
+            return true; // 이미 등록된 회원일 때
         }
-        return true; // 신규 회원일 때
+        return false; // 신규 회원일 때
+    }
+
+    public boolean hasDuplicateNickname(String nickname){
+        if (userRepository.findByNickname(nickname) != null){
+            return true; // 이미 등록된 닉네임
+        }
+        return false; // 신규 닉네임
     }
 }
