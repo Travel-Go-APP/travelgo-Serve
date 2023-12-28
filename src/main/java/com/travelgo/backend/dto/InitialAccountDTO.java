@@ -7,10 +7,8 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpDTO {
+public class InitialAccountDTO {
     private String kakaoId;
-
-    private String nickname;
 
     private String email;
 }

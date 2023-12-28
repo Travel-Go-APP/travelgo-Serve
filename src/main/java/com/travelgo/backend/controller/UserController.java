@@ -1,41 +1,66 @@
 package com.travelgo.backend.controller;
 
 import com.travelgo.backend.domain.User;
-import com.travelgo.backend.dto.CheckNicknameDTO;
+import com.travelgo.backend.dto.InitialAccountDTO;
 import com.travelgo.backend.dto.KakaoLoginRequestDTO;
 import com.travelgo.backend.dto.LoginDTO;
 import com.travelgo.backend.dto.SignUpDTO;
 import com.travelgo.backend.service.UserService;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.travelgo.exception.GlobalErrorCode;
+import com.travelgo.exception.TravelGoException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
-@RequestMapping("/api")
+@RequiredArgsConstructor
+@RequestMapping("/user")
+@Tag(name = "User", description = "유저 관련 API")
 public class UserController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService){
-        this.userService = userService;
-    }
-
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody SignUpDTO signUpDTO){
+    @Operation(summary = "회원가입")
+    public ResponseEntity<?> signUp(@RequestBody SignUpDTO signUpDTO) {
         userService.signUp(signUpDTO);
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/initial")
+    @Operation(summary = "닉네임 설정 전 유저")
+    public ResponseEntity<?> initalUser(@RequestBody InitialAccountDTO initialAccountDTO) {
+        if(userService.hasDuplicateKakaoAccount(initialAccountDTO.getKakaoId(), initialAccountDTO.getEmail())){
+            // 이미 존재하는 계정
+            throw new TravelGoException(GlobalErrorCode.ACCOUNT_DUPLICATION);
+        } else {
+            // 사용 가능 계정
+            return ResponseEntity.ok().body(initialAccountDTO);
+        }
+    }
+
+    @PostMapping("/check-nickname")
+    @Operation(summary = "닉네임 체크")
+    public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
+        if (userService.hasDuplicateNickname(nickname)) {
+            // 이미 존재하는 닉네임
+            throw new TravelGoException(GlobalErrorCode.NICKNAME_DUPLICATION);
+        } else {
+            // 사용 가능 닉네임
+            return ResponseEntity.ok().body(nickname);
+        }
+    }
+
     @PostMapping("/kakao-login")
-    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest){
-        if(userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())){
-            User user = userService.findByKakaoId(kakaoLoginRequest.getKakaoId());
+    @Operation(summary = "카카오 로그인")
+    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest) {
+        if (userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())) {
+            User user = userService.findUserByKakaoId(kakaoLoginRequest.getKakaoId());
             LoginDTO loginDTO = new LoginDTO();
             loginDTO.setKakaoId(user.getKakaoId());
             return ResponseEntity.ok(loginDTO);
@@ -45,6 +70,7 @@ public class UserController {
     }
 
     /*@PostMapping("/kakao-login")
+    @Operation(summary = "카카오 로그인")
     public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest) {
         if (userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())) {
             // 등록돼 있지 않은 사용자 회원가입 처리
@@ -63,15 +89,4 @@ public class UserController {
             return ResponseEntity.ok(loginDTO);
         }
     }*/
-
-    @PostMapping("/check-nickname")
-    public ResponseEntity<?> checkNickname(@RequestBody CheckNicknameDTO checkNicknameDTO){
-        if (userService.hasDuplicateNickname(checkNicknameDTO.getNickname())){
-            // 이미 존재하는 닉네임
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } else {
-            // 신규 닉네임
-            return ResponseEntity.ok().build();
-        }
-    }
 }
