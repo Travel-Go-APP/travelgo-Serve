@@ -6,6 +6,7 @@ import com.travelgo.backend.dto.KakaoLoginRequestDTO;
 import com.travelgo.backend.dto.LoginDTO;
 import com.travelgo.backend.dto.SignUpDTO;
 import com.travelgo.backend.service.UserService;
+import com.travelgo.exception.ErrorResponse;
 import com.travelgo.exception.GlobalErrorCode;
 import com.travelgo.exception.TravelGoException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +38,8 @@ public class UserController {
     public ResponseEntity<?> initalUser(@RequestBody InitialAccountDTO initialAccountDTO) {
         if(userService.hasDuplicateKakaoAccount(initialAccountDTO.getKakaoId(), initialAccountDTO.getEmail())){
             // 이미 존재하는 계정
-            throw new TravelGoException(GlobalErrorCode.ACCOUNT_DUPLICATION);
+            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_DUPLICATION);
+            return ResponseEntity.badRequest().body(errorResponse);
         } else {
             // 사용 가능 계정
             return ResponseEntity.ok().body(initialAccountDTO);
@@ -49,7 +51,8 @@ public class UserController {
     public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
         if (userService.hasDuplicateNickname(nickname)) {
             // 이미 존재하는 닉네임
-            throw new TravelGoException(GlobalErrorCode.NICKNAME_DUPLICATION);
+            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.NICKNAME_DUPLICATION);
+            return ResponseEntity.badRequest().body(errorResponse);
         } else {
             // 사용 가능 닉네임
             return ResponseEntity.ok().body(nickname);
@@ -65,7 +68,8 @@ public class UserController {
             loginDTO.setKakaoId(user.getKakaoId());
             return ResponseEntity.ok(loginDTO);
         } else {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_DUPLICATION);
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
 
