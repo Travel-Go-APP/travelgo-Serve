@@ -1,9 +1,9 @@
 package com.travelgo.backend.service;
 
 import com.travelgo.backend.domain.User;
-import com.travelgo.backend.dto.KakaoLoginRequestDTO;
 import com.travelgo.backend.dto.SignUpDTO;
 import com.travelgo.backend.repository.UserRepository;
+import com.vane.badwordfiltering.BadWordFiltering;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,6 @@ public class UserService {
     public void signUp(SignUpDTO signUpDTO) {
         User user = User.builder()
                 .kakaoId(signUpDTO.getKakaoId())
-                //.password(signUpDTO.getPassword())
                 .email(signUpDTO.getEmail())
                 .nickname(signUpDTO.getNickname())
                 .experience(0)
@@ -46,23 +45,28 @@ public class UserService {
 
     public boolean hasDuplicateKakaoId(String kakaoId) {
         if (userRepository.findByKakaoId(kakaoId) != null) {
-            new IllegalStateException("이미 존재하는 카카오 아이디입니다.");
             return true; // 이미 등록된 회원일 때
         }
         return false; // 신규 회원일 때
     }
 
+
     public boolean hasDuplicateKakaoAccount(String kakaoId, String email) {
-        if ((userRepository.findByKakaoId(kakaoId) != null) && (userRepository.findByEmail(email) != null)) {
+        if ((findUserByKakaoId(kakaoId) != null) && (findUserByEmail(email) != null)) {
             return true; // 이미 등록된 닉네임
         }
         return false; // 신규 닉네임
     }
 
     public boolean hasDuplicateNickname(String nickname) {
-        if (userRepository.findByNickname(nickname) != null) {
+        if (findUserByNickname(nickname) != null) {
             return true; // 이미 등록된 닉네임
         }
         return false; // 신규 닉네임
+    }
+
+    public Boolean checkNickname(String nickname) {
+        BadWordFiltering filtering = new BadWordFiltering();
+        return filtering.check(nickname);
     }
 }

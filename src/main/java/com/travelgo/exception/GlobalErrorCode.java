@@ -17,7 +17,8 @@ public enum GlobalErrorCode implements ErrorCode {
     ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "계정을 찾을 수 없습니다."),
 
     ACCOUNT_DUPLICATION(HttpStatus.BAD_REQUEST, "USER-001", "이미 사용중인 계정입니다."),
-    NICKNAME_DUPLICATION(HttpStatus.BAD_REQUEST, "USER-002", "이미 사용중인 닉네임입니다.");
+    NICKNAME_DUPLICATION(HttpStatus.BAD_REQUEST, "USER-002", "이미 사용중인 닉네임입니다."),
+    NICKNAME_DISALLOWED(HttpStatus.BAD_REQUEST, "USER-003", "부적절한 닉네임입니다.");
 
     private final HttpStatus status;
     private final String errorCode;

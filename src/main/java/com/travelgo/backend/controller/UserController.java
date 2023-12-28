@@ -8,12 +8,10 @@ import com.travelgo.backend.dto.SignUpDTO;
 import com.travelgo.backend.service.UserService;
 import com.travelgo.exception.ErrorResponse;
 import com.travelgo.exception.GlobalErrorCode;
-import com.travelgo.exception.TravelGoException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,26 +34,31 @@ public class UserController {
     @PostMapping("/initial")
     @Operation(summary = "닉네임 설정 전 유저")
     public ResponseEntity<?> initalUser(@RequestBody InitialAccountDTO initialAccountDTO) {
-        if(userService.hasDuplicateKakaoAccount(initialAccountDTO.getKakaoId(), initialAccountDTO.getEmail())){
+        if (!userService.hasDuplicateKakaoAccount(initialAccountDTO.getKakaoId(), initialAccountDTO.getEmail())) {
+            // 사용 가능 계정
+            return ResponseEntity.ok().body(initialAccountDTO);
+        } else {
             // 이미 존재하는 계정
             ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_DUPLICATION);
             return ResponseEntity.badRequest().body(errorResponse);
-        } else {
-            // 사용 가능 계정
-            return ResponseEntity.ok().body(initialAccountDTO);
         }
     }
 
     @PostMapping("/check-nickname")
     @Operation(summary = "닉네임 체크")
     public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
-        if (userService.hasDuplicateNickname(nickname)) {
-            // 이미 존재하는 닉네임
-            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.NICKNAME_DUPLICATION);
-            return ResponseEntity.badRequest().body(errorResponse);
+        if (!userService.checkNickname(nickname)) {
+            if (!userService.hasDuplicateNickname(nickname)) {
+                // 사용 가능 닉네임
+                return ResponseEntity.ok().body(nickname);
+            } else {
+                // 이미 존재하는 닉네임
+                ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.NICKNAME_DUPLICATION);
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
         } else {
-            // 사용 가능 닉네임
-            return ResponseEntity.ok().body(nickname);
+            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.NICKNAME_DISALLOWED);
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
 
