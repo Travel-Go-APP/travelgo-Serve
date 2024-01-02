@@ -69,31 +69,16 @@ public class UserController {
             User user = userService.findUserByKakaoId(kakaoLoginRequest.getKakaoId());
             LoginDTO loginDTO = new LoginDTO();
             loginDTO.setKakaoId(user.getKakaoId());
+            loginDTO.setEmail(user.getEmail());
+            loginDTO.setDetectionRange(user.getDetectionRange());
+            loginDTO.setExperience(user.getExperience());
+            loginDTO.setLevel(user.getLevel());
+            loginDTO.setWorkCount(user.getWorkCount());
+            loginDTO.setUserId(user.getUserId());
             return ResponseEntity.ok(loginDTO);
         } else {
             ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_DUPLICATION);
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
-
-    /*@PostMapping("/kakao-login")
-    @Operation(summary = "카카오 로그인")
-    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest) {
-        if (userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())) {
-            // 등록돼 있지 않은 사용자 회원가입 처리
-            SignUpDTO signUpDTO = new SignUpDTO();
-            signUpDTO.setKakaoId(kakaoLoginRequest.getKakaoId());
-            signUpDTO.setNickname(kakaoLoginRequest.getNickname());
-            signUpDTO.setEmail(kakaoLoginRequest.getEmail());
-            userService.signUp(signUpDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-            // kakaoAPI에서 불러온 정보를 kakaoLoginRequestDTO로 가져오고 그 데이터를 SignUpDTO로 보내 묶은 후 회원가입 처리
-        } else {
-            // 기존에 등록되어 있는 사용자의 로그인 처리
-            User user = userService.findByKakaoId(kakaoLoginRequest.getKakaoId());
-            LoginDTO loginDTO = new LoginDTO();
-            loginDTO.setKakaoId(user.getKakaoId());
-            return ResponseEntity.ok(loginDTO);
-        }
-    }*/
 }

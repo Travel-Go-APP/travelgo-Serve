@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginDTO {
+    private Long userId;
+    private int detectionRange;
+    private String email;
+    private int experience;
     private String kakaoId;
-    //private String password;
+    private int level;
+    private String nickname;
+    private int workCount;
 }
