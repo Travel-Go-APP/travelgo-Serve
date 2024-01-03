@@ -68,6 +68,7 @@ public class UserController {
     }
 
     @GetMapping("/findUserByNickname")
+    @Operation(summary = "닉네임으로 유저 찾기")
     public ResponseEntity<?> getUserByNickname(@RequestParam String nickName) {
         User user = userService.findUserByNickname(nickName);
         UserDTO userDto = new UserDTO(user);
@@ -76,6 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/findUserByEmail")
+    @Operation(summary = "이메일로 유저 찾기")
     public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
         User user = userService.findUserByEmail(email);
         UserDTO userDto = new UserDTO(user);
