@@ -1,10 +1,7 @@
 package com.travelgo.backend.controller;
 
 import com.travelgo.backend.domain.User;
-import com.travelgo.backend.dto.InitialAccountDTO;
-import com.travelgo.backend.dto.KakaoLoginRequestDTO;
-import com.travelgo.backend.dto.LoginDTO;
-import com.travelgo.backend.dto.SignUpDTO;
+import com.travelgo.backend.dto.*;
 import com.travelgo.backend.service.UserService;
 import com.travelgo.exception.ErrorResponse;
 import com.travelgo.exception.GlobalErrorCode;
@@ -14,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -28,7 +28,59 @@ public class UserController {
     @Operation(summary = "회원가입")
     public ResponseEntity<?> signUp(@RequestBody SignUpDTO signUpDTO) {
         userService.signUp(signUpDTO);
+
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{userId}")
+    @Operation(summary = "유저 삭제")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        User user = userService.findUserById(userId);
+        userService.delete(user);
+        return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/findUser")
+    @Operation(summary = "Id로 유저 찾기")
+    public ResponseEntity<?> getUserById(@RequestParam Long userId) {
+        User user = userService.findUserById(userId);
+        UserDTO userDto = new UserDTO(user);
+
+        return ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("/findAll")
+    @Operation(summary = "전체 유저 찾기")
+    public ResponseEntity<?> getUserAll() {
+        List<User> userList = userService.findAll();
+        List<UserDTO> dtoList = userList.stream().map(UserDTO::new).collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtoList);
+    }
+
+    @GetMapping("/findUserByKakaoId")
+    @Operation(summary = "Id로 유저 찾기")
+    public ResponseEntity<?> getUserByKakaoId(@RequestParam String kakaoId) {
+        User user = userService.findUserByKakaoId(kakaoId);
+        UserDTO userDto = new UserDTO(user);
+
+        return ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("/findUserByNickname")
+    public ResponseEntity<?> getUserByNickname(@RequestParam String nickName) {
+        User user = userService.findUserByNickname(nickName);
+        UserDTO userDto = new UserDTO(user);
+
+        return ResponseEntity.ok(userDto);
+    }
+
+    @GetMapping("/findUserByEmail")
+    public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
+        User user = userService.findUserByEmail(email);
+        UserDTO userDto = new UserDTO(user);
+
+        return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/initial")

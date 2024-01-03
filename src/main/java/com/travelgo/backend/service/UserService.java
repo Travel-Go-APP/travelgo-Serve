@@ -4,30 +4,17 @@ import com.travelgo.backend.domain.User;
 import com.travelgo.backend.dto.SignUpDTO;
 import com.travelgo.backend.repository.UserRepository;
 import com.vane.badwordfiltering.BadWordFiltering;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
+
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public User findUserByKakaoId(String kakaoId) {
-        return userRepository.findByKakaoId(kakaoId);
-    }
-
-    public User findUserByNickname(String nickname) {
-        return userRepository.findByNickname(nickname);
-    }
-
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
 
     public void signUp(SignUpDTO signUpDTO) {
         User user = User.builder()
@@ -41,6 +28,30 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
+    }
+
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(userId + "가 존재하지 않습니다."));
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findUserByKakaoId(String kakaoId) {
+        return userRepository.findByKakaoId(kakaoId);
+    }
+
+    public User findUserByNickname(String nickname) {
+        return userRepository.findByNickname(nickname);
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public boolean hasDuplicateKakaoId(String kakaoId) {
