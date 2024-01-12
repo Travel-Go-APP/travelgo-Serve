@@ -32,24 +32,24 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "유저 삭제")
-    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
-        User user = userService.findUserById(userId);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        User user = userService.findUserById(id);
         userService.delete(user);
         return ResponseEntity.ok(null);
     }
 
-    @GetMapping("/findUser")
+    @GetMapping("/findUser/{id}")
     @Operation(summary = "Id로 유저 찾기")
-    public ResponseEntity<?> getUserById(@RequestParam Long userId) {
-        User user = userService.findUserById(userId);
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        User user = userService.findUserById(id);
         UserDTO userDto = new UserDTO(user);
 
         return ResponseEntity.ok(userDto);
     }
 
-    @GetMapping("/findAll")
+    @GetMapping("/all")
     @Operation(summary = "전체 유저 찾기")
     public ResponseEntity<?> getUserAll() {
         List<User> userList = userService.findAll();
@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @GetMapping("/findUserByKakaoId")
-    @Operation(summary = "Id로 유저 찾기")
+    @Operation(summary = "카카오 Id로 유저 찾기")
     public ResponseEntity<?> getUserByKakaoId(@RequestParam String kakaoId) {
         User user = userService.findUserByKakaoId(kakaoId);
         UserDTO userDto = new UserDTO(user);
@@ -98,7 +98,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/check-nickname")
+    @PostMapping("/check_nickname")
     @Operation(summary = "닉네임 체크")
     public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
         if (!userService.checkNickname(nickname)) {
@@ -116,7 +116,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/kakao-login")
+    @PostMapping("/kakao_login")
     @Operation(summary = "카카오 로그인")
     public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest) {
         if (userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())) {
