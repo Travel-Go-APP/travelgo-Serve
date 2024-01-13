@@ -116,15 +116,13 @@ public class UserController {
         }
     }
 
-    @PostMapping("/kakao_login")
-    @Operation(summary = "카카오 로그인")
-    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest) {
-        if (userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())) {
-            User user = userService.findUserByKakaoId(kakaoLoginRequest.getKakaoId());
-            LoginDTO loginDTO = new LoginDTO(user);
-            return ResponseEntity.ok(loginDTO);
+    @PostMapping("/kakao_check")
+    @Operation(summary = "카카오 계정 체크")
+    public ResponseEntity<?> kakaoCheck(@RequestParam String kakaoId) {
+        if (userService.hasDuplicateKakaoId(kakaoId)) {
+            return ResponseEntity.ok().body(null);
         } else {
-            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_NOT_FOUND);
+            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_NO_EXIST);
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
