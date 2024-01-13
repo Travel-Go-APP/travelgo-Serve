@@ -121,17 +121,10 @@ public class UserController {
     public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDTO kakaoLoginRequest) {
         if (userService.hasDuplicateKakaoId(kakaoLoginRequest.getKakaoId())) {
             User user = userService.findUserByKakaoId(kakaoLoginRequest.getKakaoId());
-            LoginDTO loginDTO = new LoginDTO();
-            loginDTO.setKakaoId(user.getKakaoId());
-            loginDTO.setEmail(user.getEmail());
-            loginDTO.setDetectionRange(user.getDetectionRange());
-            loginDTO.setExperience(user.getExperience());
-            loginDTO.setLevel(user.getLevel());
-            loginDTO.setWorkCount(user.getWorkCount());
-            loginDTO.setUserId(user.getUserId());
+            LoginDTO loginDTO = new LoginDTO(user);
             return ResponseEntity.ok(loginDTO);
         } else {
-            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_DUPLICATION);
+            ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_NOT_FOUND);
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
