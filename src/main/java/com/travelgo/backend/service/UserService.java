@@ -18,6 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public void signUp(SignUpDTO signUpDTO) {
         User user = User.builder()
                 .kakaoId(signUpDTO.getKakaoId())
