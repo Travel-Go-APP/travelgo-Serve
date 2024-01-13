@@ -104,7 +104,7 @@ public class UserController {
         if (!userService.checkNickname(nickname)) {
             if (!userService.hasDuplicateNickname(nickname)) {
                 // 사용 가능 닉네임
-                return ResponseEntity.ok().body(nickname);
+                return ResponseEntity.ok().body(null);
             } else {
                 // 이미 존재하는 닉네임
                 ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.NICKNAME_DUPLICATION);
