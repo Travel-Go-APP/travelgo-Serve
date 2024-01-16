@@ -2,6 +2,8 @@ package com.travelgo.backend.domain;
 
 import com.travelgo.backend.dto.LocationDTO;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.*;
 
@@ -24,7 +26,6 @@ public class Location {
 
     @OneToMany(mappedBy = "location")
     private List<Review> reviews = new ArrayList<>();
-
 
     private boolean hiddenFlag; //히든 스테이지 설정
 

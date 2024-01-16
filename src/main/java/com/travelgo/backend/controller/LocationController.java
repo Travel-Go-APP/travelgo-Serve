@@ -1,5 +1,6 @@
 package com.travelgo.backend.controller;
 
+import com.travelgo.backend.domain.Area;
 import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.domain.Picture;
 import com.travelgo.backend.dto.LocationDTO;
@@ -9,9 +10,11 @@ import com.travelgo.backend.service.LocationService;
 import com.travelgo.backend.service.PictureService;
 import com.travelgo.backend.service.S3UploadService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,12 +35,14 @@ public class LocationController {
     private final S3UploadService s3UploadService;
     private final PictureService pictureService;
 
-    @PostMapping("")
+    @PostMapping(value = "", produces = "application/json", consumes = "multipart/form-data")
     @Operation(summary = "지역 저장")
+    @ApiResponse(responseCode = "200", description = "지역을 저장되고 s3에 이미지가 업로드 됩니다.")
     public ResponseEntity<?> saveLocation(@RequestBody LocationForm form,
-                                          @RequestPart(required = false, value = "image") MultipartFile image) throws IOException {
-        Location location = new Location(form.getArea(), form.getLocationName(), form.getLatitude(), form.getLongitude(), form.getDescription());
-        locationService.createLocation(location);
+                                          @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+
+        Long locationId = locationService.createLocation(form);
+        Location location = locationService.findLocationById(locationId);
 
         Picture savePicture = pictureService.saveLocationPicture(image, location);
         location.saveLocationImage(savePicture.getImageUrl());
@@ -47,9 +52,18 @@ public class LocationController {
         return ResponseEntity.ok().body(locationDTO);
     }
 
-    @PatchMapping("/{locationId}")
+    @PatchMapping("/point/{locationId}")
     @Operation(summary = "지역 위도,경도 수정")
     public ResponseEntity<?> updateLocationPoint(@PathVariable Long locationId, @RequestParam Point point) {
+        Location findLocation = locationService.findLocationById(locationId);
+        locationService.changeLocationPoint(findLocation, point);
+
+        return ResponseEntity.ok().body(null);
+    }
+
+    @PatchMapping("/{locationId}")
+    @Operation(summary = "지역 히든스테이지 설정 수정")
+    public ResponseEntity<?> setHiddenLocation(@PathVariable Long locationId, @RequestParam Point point) {
         Location findLocation = locationService.findLocationById(locationId);
         locationService.changeLocationPoint(findLocation, point);
 

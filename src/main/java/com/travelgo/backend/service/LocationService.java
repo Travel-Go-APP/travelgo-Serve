@@ -2,6 +2,7 @@ package com.travelgo.backend.service;
 
 import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.dto.Point;
+import com.travelgo.backend.form.LocationForm;
 import com.travelgo.backend.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,17 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
 
-    public void createLocation(Location location) {
+    public Long createLocation(LocationForm form) {
+        Location location = Location.builder()
+                .area(form.getArea())
+                .hiddenFlag(false)
+                .locationName(form.getLocationName())
+                .locationImage(null)
+                .longitude(form.getLongitude())
+                .latitude(form.getLatitude())
+                .description(form.getDescription()).build();
         locationRepository.save(location);
+        return location.getLocationId();
     }
 
     public void deleteLocation(Location location) {
