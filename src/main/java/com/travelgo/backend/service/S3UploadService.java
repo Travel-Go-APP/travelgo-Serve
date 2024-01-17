@@ -19,11 +19,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class S3UploadService {
-    private AmazonS3Client amazonS3Client;
+    private final AmazonS3Client amazonS3Client;
 
-    public S3UploadService(AmazonS3Client amazonS3Client) {
-        this.amazonS3Client = amazonS3Client;
-    }
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;

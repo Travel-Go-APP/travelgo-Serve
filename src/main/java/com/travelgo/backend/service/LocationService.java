@@ -19,19 +19,12 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
 
-    public Long createLocation(LocationForm form) {
-        Location location = Location.builder()
-                .area(form.getArea())
-                .hiddenFlag(false)
-                .locationName(form.getLocationName())
-                .locationImage(null)
-                .longitude(form.getLongitude())
-                .latitude(form.getLatitude())
-                .description(form.getDescription()).build();
-        locationRepository.save(location);
-        return location.getLocationId();
+    @Transactional
+    public Location createLocation(Location location) {
+        return locationRepository.save(location);
     }
 
+    @Transactional
     public void deleteLocation(Location location) {
         locationRepository.delete(location);
     }
