@@ -1,6 +1,7 @@
 package com.travelgo.backend.service;
 
 import com.travelgo.backend.domain.Location;
+import com.travelgo.backend.domain.Picture;
 import com.travelgo.backend.dto.Point;
 import com.travelgo.backend.form.LocationForm;
 import com.travelgo.backend.repository.LocationRepository;
@@ -20,13 +21,18 @@ public class LocationService {
     private final LocationRepository locationRepository;
 
     @Transactional
-    public Location createLocation(Location location) {
-        return locationRepository.save(location);
+    public void createLocation(Location location) {
+        locationRepository.save(location);
     }
 
     @Transactional
     public void deleteLocation(Location location) {
         locationRepository.delete(location);
+    }
+
+    @Transactional
+    public void updateLocationPicture(Location location, Picture image) {
+        location.saveLocationImage(image.getImageUrl());
     }
 
     public Location findLocationById(Long locationId) {

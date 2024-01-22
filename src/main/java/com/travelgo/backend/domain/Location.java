@@ -49,7 +49,6 @@ public class Location {
     }
 
     //메서드
-
     public void saveLocationImage(String imageUrl) {
         this.locationImage = imageUrl;
     }

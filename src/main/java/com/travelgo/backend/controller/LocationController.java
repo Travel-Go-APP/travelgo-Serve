@@ -1,6 +1,5 @@
 package com.travelgo.backend.controller;
 
-import com.travelgo.backend.domain.Area;
 import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.domain.Picture;
 import com.travelgo.backend.dto.LocationDTO;
@@ -14,10 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,7 +35,7 @@ public class LocationController {
     @PostMapping(value = "")
     @Operation(summary = "지역 저장")
     @ApiResponse(responseCode = "200", description = "지역을 저장되고 s3에 이미지가 업로드 됩니다.")
-    public ResponseEntity<?> saveLocation(@RequestPart(value = "form", required = false) LocationForm form,
+    public ResponseEntity<?> saveLocation(@Valid @RequestPart(value = "form", required = false) LocationForm form,
                                           @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
         Location location = Location.builder()
                 .area(form.getArea())
@@ -53,7 +49,7 @@ public class LocationController {
         locationService.createLocation(location);
 
         Picture savePicture = pictureService.saveLocationPicture(image, location);
-        location.saveLocationImage(savePicture.getImageUrl());
+        locationService.updateLocationPicture(location, savePicture);
 
         LocationDTO locationDTO = new LocationDTO(location);
 
