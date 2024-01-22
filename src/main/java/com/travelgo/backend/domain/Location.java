@@ -58,5 +58,7 @@ public class Location {
         this.longitude = longitude;
     }
 
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Picture> pictures = new ArrayList<>();
 
 }
