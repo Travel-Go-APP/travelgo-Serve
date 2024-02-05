@@ -1,5 +1,8 @@
 package com.travelgo.backend.controller;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.travelgo.backend.domain.Area;
 import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.domain.Picture;
 import com.travelgo.backend.dto.LocationDTO;
@@ -13,8 +16,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -116,5 +123,42 @@ public class LocationController {
         return ResponseEntity.ok().body(locationDTO);
     }
 
+    @PostMapping("/getAreaLocations")
+    @Operation(summary = "위치로부터 도를 찾아 해당 도에 있는 모든 위치 찾기")
+    public ResponseEntity<?> getProvinceLocations(@RequestBody LocationDTO locationDTO) {
+        // 위도, 경도로 도 찾기 (역지오코딩)
+        String areaString = getAreaByLatLng(locationDTO.getLatitude(), locationDTO.getLongitude());
+
+        // 문자열을 Area 열거형으로 변환
+        Area area = Area.valueOf(areaString);
+
+        // 해당 도에 있는 모든 위치 찾기
+        List<Location> locationList = locationService.findAllByArea(area);
+
+        List<LocationDTO> locationDTOList = locationList.stream()
+                .map(LocationDTO::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(locationDTOList);
+    }
+
+    // 역지오코딩(위,경도 도 추출)
+    public String getAreaByLatLng(Double latitude, Double longitude){
+        String restApiKey = "4985bb6e1259e1eea63d88a7decc596b";
+        String url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=" + longitude + "&y=" + latitude + "&input_coord=WGS84";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "KakaoAK " + restApiKey);
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+        String jsonString = responseEntity.getBody();
+
+        // 응답 JSON 도(area) 이름 추출
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        String area = jsonObject.get("documents").getAsJsonArray().get(0).getAsJsonObject().get("region_1depth_name").getAsString();
+
+        return area;
+    }
 
 }

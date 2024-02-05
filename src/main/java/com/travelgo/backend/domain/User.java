@@ -31,6 +31,9 @@ public class User {
     private String email;
 
     private int experience;
+    public void setExperience(int experience){
+        this.experience = experience;
+    }
 
     private int workCount;
 

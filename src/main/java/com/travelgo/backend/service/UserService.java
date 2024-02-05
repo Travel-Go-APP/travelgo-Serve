@@ -83,4 +83,8 @@ public class UserService {
         BadWordFiltering filtering = new BadWordFiltering();
         return filtering.check(nickname);
     }
+
+    public User save(User user){
+        return userRepository.save(user);
+    }
 }

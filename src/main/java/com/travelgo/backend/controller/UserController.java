@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -125,5 +126,33 @@ public class UserController {
             ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_NO_EXIST);
             return ResponseEntity.badRequest().body(errorResponse);
         }
+    }
+
+    @PostMapping("/updateExperience")
+    @Operation(summary = "유저 경험치 업데이트")
+    public ResponseEntity<?> updateExperience(@RequestBody ExperienceDTO experienceDTO) {
+        long serverTime = System.currentTimeMillis();
+        long timeDifference = serverTime - experienceDTO.getMillisecond(); //시간차 체크
+
+        if (timeDifference < 0 || timeDifference > 5000) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid timestamp");
+        } // 시간차가 5000ms(5초) 이내 확인
+
+        User user = userService.findUserByKakaoId(experienceDTO.getKakaoId()); //ID로 유저 찾기
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        user.setExperience(user.getExperience() + experienceDTO.getExperience()); //경험치 증가
+
+        userService.save(user); //DB update
+
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        userResponseDTO.setLevel(user.getLevel());
+        userResponseDTO.setExperience(user.getExperience());
+        userResponseDTO.setWorkCount(user.getWorkCount()); //응답 DTO -- 형태 맞춰서 수정 예정
+
+        return ResponseEntity.ok(userResponseDTO);
     }
 }

@@ -1,5 +1,6 @@
 package com.travelgo.backend.service;
 
+import com.travelgo.backend.domain.Area;
 import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.domain.Picture;
 import com.travelgo.backend.dto.Point;
@@ -50,5 +51,9 @@ public class LocationService {
     @Transactional
     public void changeLocationPoint(Location location, Point point) {
         location.changePoint(point.getLatitude(), point.getLongitude());
+    }
+
+    public List<Location> findAllByArea(Area area){
+        return locationRepository.findAllByArea(area);
     }
 }
