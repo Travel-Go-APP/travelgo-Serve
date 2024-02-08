@@ -84,6 +84,7 @@ public class UserService {
         return filtering.check(nickname);
     }
 
+    @Transactional
     public User save(User user){
         return userRepository.save(user);
     }

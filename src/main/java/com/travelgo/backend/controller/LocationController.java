@@ -125,9 +125,9 @@ public class LocationController {
 
     @PostMapping("/getAreaLocations")
     @Operation(summary = "위치로부터 도를 찾아 해당 도에 있는 모든 위치 찾기")
-    public ResponseEntity<?> getProvinceLocations(@RequestBody LocationDTO locationDTO) {
+    public ResponseEntity<?> getProvinceLocations(@RequestParam Double Latitude, @RequestParam Double Longitude) {
         // 위도, 경도로 도 찾기 (역지오코딩)
-        String areaString = getAreaByLatLng(locationDTO.getLatitude(), locationDTO.getLongitude());
+        String areaString = getAreaByLatLng(Latitude, Longitude);
 
         // 문자열을 Area 열거형으로 변환
         Area area = Area.valueOf(areaString);

@@ -134,9 +134,9 @@ public class UserController {
         long serverTime = System.currentTimeMillis();
         long timeDifference = serverTime - experienceDTO.getMillisecond(); //시간차 체크
 
-        if (timeDifference < 0 || timeDifference > 5000) {
+        /*if (timeDifference < 0 || timeDifference > 5000) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid timestamp");
-        } // 시간차가 5000ms(5초) 이내 확인
+        } // 시간차가 5000ms(5초) 이내 확인*/
 
         User user = userService.findUserByKakaoId(experienceDTO.getKakaoId()); //ID로 유저 찾기
 
@@ -148,10 +148,8 @@ public class UserController {
 
         userService.save(user); //DB update
 
-        UserResponseDTO userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setLevel(user.getLevel());
-        userResponseDTO.setExperience(user.getExperience());
-        userResponseDTO.setWorkCount(user.getWorkCount()); //응답 DTO -- 형태 맞춰서 수정 예정
+        UserResponseDTO userResponseDTO = new UserResponseDTO(user);
+        //응답 DTO -- 형태 맞춰서 수정 예정
 
         return ResponseEntity.ok(userResponseDTO);
     }

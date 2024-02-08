@@ -1,12 +1,22 @@
 package com.travelgo.backend.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.travelgo.backend.domain.User;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponseDTO {
+
+    private String kakaoId;
     private int level;
     private int experience;
     private int workCount;
+
+    public UserResponseDTO(User user) {
+        this.kakaoId = user.getKakaoId();
+        this.level = user.getLevel();
+        this.experience = user.getExperience();
+        this.workCount = user.getWorkCount();
+    }
 }
