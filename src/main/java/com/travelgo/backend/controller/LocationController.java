@@ -65,11 +65,11 @@ public class LocationController {
         return ResponseEntity.ok().body(null);
     }
 
-    @PatchMapping("/{locationId}")
+    @PatchMapping("/hidden/{locationId}")
     @Operation(summary = "지역 히든스테이지 설정 수정")
-    public ResponseEntity<?> setHiddenLocation(@PathVariable Long locationId, @RequestParam Point point) {
+    public ResponseEntity<?> setHiddenLocation(@PathVariable Long locationId) {
         Location findLocation = locationService.findLocationById(locationId);
-        locationService.changeLocationPoint(findLocation, point);
+        locationService.setHiddenLocation(findLocation);
 
         return ResponseEntity.ok().body(null);
     }
@@ -77,10 +77,8 @@ public class LocationController {
     @DeleteMapping("/{locationId}")
     @Operation(summary = "지역 삭제")
     public ResponseEntity<?> deleteLocation(@PathVariable Long locationId) {
-        Picture picture = pictureService.findLocationPicture(locationId);
-        s3UploadService.fileDelete(picture.getImageUrl());
-
         Location findLocation = locationService.findLocationById(locationId);
+        s3UploadService.fileDelete(findLocation.getLocationImage());
         locationService.deleteLocation(findLocation);
 
         return ResponseEntity.ok().body(null);

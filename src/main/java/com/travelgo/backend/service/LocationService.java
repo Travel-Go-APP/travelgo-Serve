@@ -51,4 +51,9 @@ public class LocationService {
     public void changeLocationPoint(Location location, Point point) {
         location.changePoint(point.getLatitude(), point.getLongitude());
     }
+
+    @Transactional
+    public void setHiddenLocation(Location location){
+        location.setHiddenFlag();
+    }
 }

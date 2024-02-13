@@ -27,6 +27,9 @@ public class Location {
     @OneToMany(mappedBy = "location")
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToOne(mappedBy = "location", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Picture picture;
+
     private boolean hiddenFlag; //히든 스테이지 설정
 
     private String locationName; //위치 이름
@@ -58,7 +61,7 @@ public class Location {
         this.longitude = longitude;
     }
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Picture> pictures = new ArrayList<>();
-
+    public void setHiddenFlag(){
+        this.hiddenFlag = true;
+    }
 }

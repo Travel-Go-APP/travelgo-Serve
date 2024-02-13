@@ -45,6 +45,8 @@ public class S3UploadService {
 
         amazonS3Client.putObject(putObjectRequest);
 
+//        removeNewFile(uploadFile);  // 로컬에 생성된 File 삭제 (MultipartFile -> File 전환 하며 로컬에 파일 생성됨)
+
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
@@ -66,8 +68,8 @@ public class S3UploadService {
 
     @Transactional
     public void fileDelete(String fileUrl) {
-        String[] key = fileUrl.split("/");
-        String deleteKey = key[key.length-2]+"/"+key[key.length-1];
+        String deleteKey = fileUrl.split("/")[3] + "/" + fileUrl.split("/")[4];
+        log.info(deleteKey);
         amazonS3Client.deleteObject(bucket,deleteKey);
         log.info(deleteKey);
     }

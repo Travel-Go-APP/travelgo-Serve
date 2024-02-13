@@ -3,6 +3,7 @@ package com.travelgo.backend.service;
 import com.travelgo.backend.domain.Item;
 import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.domain.Picture;
+import com.travelgo.backend.repository.LocationRepository;
 import com.travelgo.backend.repository.PictureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class PictureService {
     @Transactional
     public Picture saveLocationPicture(MultipartFile image, Location location) throws IOException {
         String fileUrl = s3UploadService.upload(image, "images");
+        if (!pictureRepository.findByImageUrl(fileUrl).isEmpty()){
+            throw new IOException("이미 존재하는 사진입니다.");
+        }
         Picture picture = new Picture(fileUrl, location);
         return pictureRepository.save(picture);
     }

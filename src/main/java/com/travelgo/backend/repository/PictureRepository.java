@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface PictureRepository extends JpaRepository<Picture, Long> {
+
+    List<Picture> findByImageUrl(String imageUrl);
     Picture findByLocation_LocationId(Long locationId);
     Picture findByItem_ItemId(Long ItemId);
 }

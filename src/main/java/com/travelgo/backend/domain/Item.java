@@ -17,6 +17,9 @@ public class Item {
     @Column(name = "item_id")
     private Long itemId;
 
+    @OneToOne(mappedBy = "item", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Picture picture;
+
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
