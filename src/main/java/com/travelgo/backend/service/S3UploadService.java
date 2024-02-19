@@ -35,7 +35,7 @@ public class S3UploadService {
     }*/
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException{
-        String fileName = dirName + "/" + multipartFile.getOriginalFilename();
+        String fileName = dirName + "/" + multipartFile.getOriginalFilename().replaceAll(" ", ""); //파일 공백 제거
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());
