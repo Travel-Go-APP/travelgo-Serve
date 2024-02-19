@@ -1,5 +1,7 @@
 package com.travelgo.backend.controller;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.travelgo.backend.domain.Area;
@@ -143,7 +145,7 @@ public class LocationController {
     }
 
     // 역지오코딩(위,경도 도 추출)
-    public String getAreaByLatLng(Double latitude, Double longitude){
+    public String getAreaByLatLng(Double latitude, Double longitude) {
         String restApiKey = "4985bb6e1259e1eea63d88a7decc596b";
         String url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=" + longitude + "&y=" + latitude + "&input_coord=WGS84";
 
@@ -152,13 +154,19 @@ public class LocationController {
         headers.add("Authorization", "KakaoAK " + restApiKey);
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
-        String jsonString = responseEntity.getBody();
+        String jsonString = responseEntity.getBody().trim();
+
+        System.out.println("Response from Kakao API: " + jsonString);
 
         // 응답 JSON 도(area) 이름 추출
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        String area = jsonObject.get("documents").getAsJsonArray().get(0).getAsJsonObject().get("region_1depth_name").getAsString();
-
-        return area;
+        JsonArray documents = jsonObject.getAsJsonArray("documents");
+        if(documents.size() > 0) {
+            JsonObject document = documents.get(0).getAsJsonObject();
+            String area = document.getAsJsonObject("address").get("region_1depth_name").getAsString();
+            System.out.println("Area: " + area);
+            return area;
+        }
+        throw new RuntimeException("Unable to get area by latitude and longitude");
     }
-
 }

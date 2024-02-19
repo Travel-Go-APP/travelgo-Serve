@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+
+    @Autowired
+    private int[] expTable;
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입")
@@ -146,9 +150,17 @@ public class UserController {
 
         user.setExperience(user.getExperience() + experienceDTO.getExperience()); //경험치 증가
 
+        boolean levelUp = false;
+
+        while (user.getExperience() >= expTable[user.getLevel()]){
+            user.setExperience(user.getExperience() - expTable[user.getLevel()]);
+            user.setLevel(user.getLevel() + 1);
+            levelUp = true;
+        }
+
         userService.save(user); //DB update
 
-        UserResponseDTO userResponseDTO = new UserResponseDTO(user);
+        UserResponseDTO userResponseDTO = new UserResponseDTO(user, levelUp, expTable[user.getLevel()]);
         //응답 DTO -- 형태 맞춰서 수정 예정
 
         return ResponseEntity.ok(userResponseDTO);
