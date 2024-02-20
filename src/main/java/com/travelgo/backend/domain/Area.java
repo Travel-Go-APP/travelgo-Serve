@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Area {
 
-    서울특별시("Seoul"),
+    서울("Seoul"),
     부산광역시("Busan"),
     대구광역시("Daegu"),
     인천광역시("Incheon"),
