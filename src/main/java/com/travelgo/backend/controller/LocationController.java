@@ -8,6 +8,10 @@ import com.travelgo.backend.form.LocationForm;
 import com.travelgo.backend.service.LocationService;
 import com.travelgo.backend.service.PictureService;
 import com.travelgo.backend.service.S3UploadService;
+import com.travelgo.exception.ErrorCode;
+import com.travelgo.exception.ErrorResponse;
+import com.travelgo.exception.GlobalErrorCode;
+import com.travelgo.exception.TravelGoException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,19 +41,23 @@ public class LocationController {
     @ApiResponse(responseCode = "200", description = "지역을 저장되고 s3에 이미지가 업로드 됩니다.")
     public ResponseEntity<?> saveLocation(@Valid @RequestPart(value = "form", required = false) LocationForm form,
                                           @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+
+        String fileUrl = s3UploadService.upload(image, "images");
+        
+        if(fileUrl == null)
+            throw new TravelGoException(GlobalErrorCode.NULL_OBJECT);
+
         Location location = Location.builder()
                 .area(form.getArea())
-                .hiddenFlag(false)
+                .hiddenFlag(Boolean.FALSE)
                 .locationName(form.getLocationName())
-                .locationImage(null)
+                .locationImage(fileUrl)
                 .longitude(form.getLongitude())
                 .latitude(form.getLatitude())
                 .description(form.getDescription()).build();
 
         locationService.createLocation(location);
-
-        Picture savePicture = pictureService.saveLocationPicture(image, location);
-        locationService.updateLocationPicture(location, savePicture);
+        pictureService.saveLocationPicture(image, location);
 
         LocationDTO locationDTO = new LocationDTO(location);
 
@@ -81,7 +89,7 @@ public class LocationController {
         s3UploadService.fileDelete(findLocation.getLocationImage());
         locationService.deleteLocation(findLocation);
 
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(locationId);
     }
 
     @GetMapping("")
@@ -95,7 +103,7 @@ public class LocationController {
 
     @GetMapping("/findAllLocation")
     @Operation(summary = "전체 지역 찾기")
-    public ResponseEntity<?> getLocation(@RequestParam Long locationId) {
+    public ResponseEntity<?> getLocation() {
         List<Location> locationList = locationService.findAll();
 
         List<LocationDTO> locationDTOList = locationList.stream()

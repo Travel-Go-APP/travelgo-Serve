@@ -13,6 +13,8 @@ public enum GlobalErrorCode implements ErrorCode {
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "COMMON-001", "유효성 검증에 실패했습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON-002", "서버에서 처리할 수 없습니다."),
 
+    NULL_OBJECT(HttpStatus.BAD_REQUEST, "COMMON-NULL", "객체값이 null 값입니다."),
+
     UNAUTHORIZED(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "인증에 실패하였습니다."),
     ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "계정을 찾을 수 없습니다."),
 

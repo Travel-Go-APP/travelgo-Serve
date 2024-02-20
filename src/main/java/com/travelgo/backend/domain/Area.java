@@ -16,7 +16,7 @@ public enum Area {
     대전광역시("Daejeon"),
     울산광역시("Ulsan"),
     세종특별자치시("Sejong"),
-    경기도("Gyeonggido"),
+    경기("Gyeonggido"),
     강원도("Gangwondo"),
     충청남도("Chungcheongnamdo"),
     충청북도("Chungcheongbukdo"),
