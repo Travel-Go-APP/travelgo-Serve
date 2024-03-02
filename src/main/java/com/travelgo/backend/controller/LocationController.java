@@ -1,15 +1,12 @@
 package com.travelgo.backend.controller;
 
 import com.travelgo.backend.domain.Location;
-import com.travelgo.backend.domain.Picture;
 import com.travelgo.backend.dto.LocationDTO;
 import com.travelgo.backend.dto.Point;
 import com.travelgo.backend.form.LocationForm;
 import com.travelgo.backend.service.LocationService;
 import com.travelgo.backend.service.PictureService;
 import com.travelgo.backend.service.S3UploadService;
-import com.travelgo.exception.ErrorCode;
-import com.travelgo.exception.ErrorResponse;
 import com.travelgo.exception.GlobalErrorCode;
 import com.travelgo.exception.TravelGoException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -115,8 +112,8 @@ public class LocationController {
 
     @GetMapping("/findlocationByname")
     @Operation(summary = "이름으로 지역 찾기")
-    public ResponseEntity<?> getLocationByName(@RequestParam String name) {
-        Location findLocation = locationService.findLocationByName(name);
+    public ResponseEntity<?> getLocationByName(@RequestParam String locationName) {
+        Location findLocation = locationService.findLocationByName(locationName);
         LocationDTO locationDTO = new LocationDTO(findLocation);
 
         return ResponseEntity.ok().body(locationDTO);

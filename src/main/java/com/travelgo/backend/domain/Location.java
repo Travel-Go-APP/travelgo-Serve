@@ -52,7 +52,7 @@ public class Location {
     }
 
     //메서드
-    public void saveLocationImage(String imageUrl) {
+    public void changeLocationImage(String imageUrl) {
         this.locationImage = imageUrl;
     }
 
