@@ -23,6 +23,6 @@ public class PictureController {
     @Operation(summary = "사진 삭제")
     public ResponseEntity<?> deletePicture(@PathVariable Long id) {
         pictureService.delete(id);
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.ok().body(id);
     }
 }

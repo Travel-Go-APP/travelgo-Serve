@@ -13,6 +13,8 @@ public enum GlobalErrorCode implements ErrorCode {
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "COMMON-001", "유효성 검증에 실패했습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON-002", "서버에서 처리할 수 없습니다."),
 
+    NULL_OBJECT(HttpStatus.BAD_REQUEST, "COMMON-NULL", "객체값이 null 값입니다."),
+
     UNAUTHORIZED(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "인증에 실패하였습니다."),
     ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "계정을 찾을 수 없습니다."),
 
@@ -22,7 +24,8 @@ public enum GlobalErrorCode implements ErrorCode {
     ACCOUNT_NO_EXIST(HttpStatus.BAD_REQUEST, "USER-004", "신규 유저입니다."),
 
     INVALID_FILE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "FILE-001", "유효하지 않은 파일 컨텐트 타입입니다."),
-    MISMATCH_IMAGE_FILE(HttpStatus.BAD_REQUEST, "FILE-002", "이미지 파일이 매치되지 않습니다.");
+    MISMATCH_IMAGE_FILE(HttpStatus.BAD_REQUEST, "FILE-002", "이미지 파일이 매치되지 않습니다."),
+    IMAGE_FILE_DUPLICATION(HttpStatus.BAD_REQUEST, "FILE-003", "이미지 파일이 이미 존재합니다.");
 
     private final HttpStatus status;
     private final String errorCode;

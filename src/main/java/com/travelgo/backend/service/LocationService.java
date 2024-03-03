@@ -4,10 +4,8 @@ import com.travelgo.backend.domain.Area;
 import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.domain.Picture;
 import com.travelgo.backend.dto.Point;
-import com.travelgo.backend.form.LocationForm;
 import com.travelgo.backend.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -33,7 +31,7 @@ public class LocationService {
 
     @Transactional
     public void updateLocationPicture(Location location, Picture image) {
-        location.saveLocationImage(image.getImageUrl());
+        location.changeLocationImage(image.getImageUrl());
     }
 
     public Location findLocationById(Long locationId) {
@@ -56,4 +54,10 @@ public class LocationService {
     public List<Location> findAllByArea(Area area){
         return locationRepository.findAllByArea(area);
     }
+  
+    @Transactional
+    public void setHiddenLocation(Location location){
+        location.setHiddenFlag();
+    }
+      
 }

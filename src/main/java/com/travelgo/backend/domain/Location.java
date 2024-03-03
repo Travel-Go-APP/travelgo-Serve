@@ -30,6 +30,9 @@ public class Location {
     @OneToMany(mappedBy = "location")
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToOne(mappedBy = "location", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Picture picture;
+
     private boolean hiddenFlag; //히든 스테이지 설정
 
     private String locationName; //위치 이름
@@ -52,7 +55,7 @@ public class Location {
     }
 
     //메서드
-    public void saveLocationImage(String imageUrl) {
+    public void changeLocationImage(String imageUrl) {
         this.locationImage = imageUrl;
     }
 
@@ -69,4 +72,8 @@ public class Location {
     @JsonManagedReference
     private List<Visit> visits = new ArrayList<>();
 
+    public void setHiddenFlag(){
+        this.hiddenFlag = true;
+    }
+  
 }
