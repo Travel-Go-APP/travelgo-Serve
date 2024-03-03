@@ -13,7 +13,8 @@ public class UserResponseDTO {
     private int experience;
     private int workCount;
     private boolean levelUp;
-    private double experienceRatio; // 경험치 비율
+    //private double experienceRatio; // 경험치 비율
+    private int totalExperience;
 
     public UserResponseDTO(User user, boolean levelUp, int nextLevelExp) {
         this.kakaoId = user.getKakaoId();
@@ -21,6 +22,7 @@ public class UserResponseDTO {
         this.experience = user.getExperience();
         this.workCount = user.getWorkCount();
         this.levelUp = levelUp;
-        this.experienceRatio = ((double) user.getExperience())/nextLevelExp; // 경험치 비율 계산 및 반환
+        this.totalExperience = nextLevelExp;
+        //this.experienceRatio = ((double) user.getExperience())/nextLevelExp; // 경험치 비율 계산 및 반환
     }
 }

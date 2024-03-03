@@ -1,5 +1,7 @@
 package com.travelgo.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.travelgo.backend.dto.LocationDTO;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -14,6 +16,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Location {
 
     @Id
@@ -59,6 +62,11 @@ public class Location {
     }
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Picture> pictures = new ArrayList<>();
+
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Visit> visits = new ArrayList<>();
 
 }
