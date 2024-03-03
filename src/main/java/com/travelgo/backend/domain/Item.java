@@ -17,6 +17,9 @@ public class Item {
     @Column(name = "item_id")
     private Long itemId;
 
+    @OneToOne(mappedBy = "item", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Picture picture;
+
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
@@ -25,4 +28,9 @@ public class Item {
     private String itemName;
 
     private String itemDescription;
+
+    //메서드
+    public void changeItemImage(String imageUrl) {
+        this.itemImage = imageUrl;
+    }
 }

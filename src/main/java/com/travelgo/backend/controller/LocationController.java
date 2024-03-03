@@ -1,11 +1,27 @@
 package com.travelgo.backend.controller;
 
+import com.travelgo.backend.domain.Location;
+import com.travelgo.backend.dto.LocationDTO;
+import com.travelgo.backend.dto.Point;
+import com.travelgo.backend.form.LocationForm;
+import com.travelgo.backend.service.LocationService;
+import com.travelgo.backend.service.PictureService;
+import com.travelgo.backend.service.S3UploadService;
+import com.travelgo.exception.GlobalErrorCode;
+import com.travelgo.exception.TravelGoException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -13,4 +29,95 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/location")
 @Tag(name = "Location", description = "장소 관련 API")
 public class LocationController {
+    private final LocationService locationService;
+    private final S3UploadService s3UploadService;
+    private final PictureService pictureService;
+
+    @PostMapping(value = "")
+    @Operation(summary = "지역 저장")
+    @ApiResponse(responseCode = "200", description = "지역을 저장되고 s3에 이미지가 업로드 됩니다.")
+    public ResponseEntity<?> saveLocation(@Valid @RequestPart(value = "form", required = false) LocationForm form,
+                                          @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+
+        String fileUrl = s3UploadService.upload(image, "images");
+        
+        if(fileUrl == null)
+            throw new TravelGoException(GlobalErrorCode.NULL_OBJECT);
+
+        Location location = Location.builder()
+                .area(form.getArea())
+                .hiddenFlag(Boolean.FALSE)
+                .locationName(form.getLocationName())
+                .locationImage(fileUrl)
+                .longitude(form.getLongitude())
+                .latitude(form.getLatitude())
+                .description(form.getDescription()).build();
+
+        locationService.createLocation(location);
+        pictureService.saveLocationPicture(image, location);
+
+        LocationDTO locationDTO = new LocationDTO(location);
+
+        return ResponseEntity.ok().body(locationDTO);
+    }
+
+    @PatchMapping("/point/{locationId}")
+    @Operation(summary = "지역 위도,경도 수정")
+    public ResponseEntity<?> updateLocationPoint(@PathVariable Long locationId, @RequestParam Point point) {
+        Location findLocation = locationService.findLocationById(locationId);
+        locationService.changeLocationPoint(findLocation, point);
+
+        return ResponseEntity.ok().body(null);
+    }
+
+    @PatchMapping("/hidden/{locationId}")
+    @Operation(summary = "지역 히든스테이지 설정 수정")
+    public ResponseEntity<?> setHiddenLocation(@PathVariable Long locationId) {
+        Location findLocation = locationService.findLocationById(locationId);
+        locationService.setHiddenLocation(findLocation);
+
+        return ResponseEntity.ok().body(null);
+    }
+
+    @DeleteMapping("/{locationId}")
+    @Operation(summary = "지역 삭제")
+    public ResponseEntity<?> deleteLocation(@PathVariable Long locationId) {
+        Location findLocation = locationService.findLocationById(locationId);
+        s3UploadService.fileDelete(findLocation.getLocationImage());
+        locationService.deleteLocation(findLocation);
+
+        return ResponseEntity.ok().body(locationId);
+    }
+
+    @GetMapping("")
+    @Operation(summary = "Id로 지역 찾기")
+    public ResponseEntity<?> getLocationById(@RequestParam Long locationId) {
+        Location findLocation = locationService.findLocationById(locationId);
+        LocationDTO locationDTO = new LocationDTO(findLocation);
+
+        return ResponseEntity.ok().body(locationDTO);
+    }
+
+    @GetMapping("/findAllLocation")
+    @Operation(summary = "전체 지역 찾기")
+    public ResponseEntity<?> getLocation() {
+        List<Location> locationList = locationService.findAll();
+
+        List<LocationDTO> locationDTOList = locationList.stream()
+                .map(LocationDTO::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(locationDTOList);
+    }
+
+    @GetMapping("/findlocationByname")
+    @Operation(summary = "이름으로 지역 찾기")
+    public ResponseEntity<?> getLocationByName(@RequestParam String locationName) {
+        Location findLocation = locationService.findLocationByName(locationName);
+        LocationDTO locationDTO = new LocationDTO(findLocation);
+
+        return ResponseEntity.ok().body(locationDTO);
+    }
+
+
 }
