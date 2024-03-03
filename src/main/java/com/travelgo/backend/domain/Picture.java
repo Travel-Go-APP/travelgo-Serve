@@ -1,5 +1,6 @@
 package com.travelgo.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class Picture {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="location_id")
+    @JsonBackReference
     private Location location;
 
     @OneToOne(fetch = FetchType.LAZY)

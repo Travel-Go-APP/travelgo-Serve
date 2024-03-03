@@ -1,9 +1,12 @@
 package com.travelgo.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -31,11 +34,22 @@ public class User {
     private String email;
 
     private int experience;
+    public void setExperience(int experience){
+        this.experience = experience;
+    }
 
     private int workCount;
 
     private int detectionRange;
 
     private int level;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Visit> visits = new ArrayList<>();
+
+    public void setLevel(int level){
+        this.level = level;
+    }
 
 }

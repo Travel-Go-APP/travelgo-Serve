@@ -1,9 +1,14 @@
 package com.travelgo.backend.dto;
 
+import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.domain.User;
+import com.travelgo.backend.domain.Visit;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +24,8 @@ public class UserDTO {
     private int detectionRange;
     private int level;
 
+    private List<Long> visitedLocationIds;
+
     public UserDTO(User user) {
         this.userId = user.getUserId();
         this.kakaoId = user.getKakaoId();
@@ -28,5 +35,6 @@ public class UserDTO {
         this.workCount = user.getWorkCount();
         this.detectionRange = user.getDetectionRange();
         this.level = user.getLevel();
+        this.visitedLocationIds = user.getVisits().stream().map(visit -> visit.getLocation().getLocationId()).collect(Collectors.toList());
     }
 }

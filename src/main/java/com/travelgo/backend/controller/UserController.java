@@ -1,17 +1,25 @@
 package com.travelgo.backend.controller;
 
+import com.amazonaws.Response;
+import com.travelgo.backend.domain.Location;
 import com.travelgo.backend.domain.User;
+import com.travelgo.backend.domain.Visit;
 import com.travelgo.backend.dto.*;
+import com.travelgo.backend.service.LocationService;
 import com.travelgo.backend.service.UserService;
+import com.travelgo.backend.service.VisitService;
 import com.travelgo.exception.ErrorResponse;
 import com.travelgo.exception.GlobalErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +31,12 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+    private final LocationService locationService;
+    private final VisitService visitService;
+
+
+    @Autowired
+    private int[] expTable;
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입")
@@ -125,5 +139,59 @@ public class UserController {
             ErrorResponse errorResponse = ErrorResponse.from(GlobalErrorCode.ACCOUNT_NO_EXIST);
             return ResponseEntity.badRequest().body(errorResponse);
         }
+    }
+
+    @PostMapping("/updateExperience")
+    @Operation(summary = "유저 경험치 업데이트")
+    public ResponseEntity<?> updateExperience(@RequestBody ExperienceDTO experienceDTO) {
+        long serverTime = System.currentTimeMillis();
+        long timeDifference = serverTime - experienceDTO.getMillisecond(); //시간차 체크
+
+        /*if (timeDifference < 0 || timeDifference > 5000) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid timestamp");
+        } // 시간차가 5000ms(5초) 이내 확인*/
+
+        User user = userService.findUserByKakaoId(experienceDTO.getKakaoId()); //ID로 유저 찾기
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        user.setExperience(user.getExperience() + experienceDTO.getExperience()); //경험치 증가
+
+        boolean levelUp = false;
+
+        while (user.getExperience() >= expTable[user.getLevel()]){
+            user.setExperience(user.getExperience() - expTable[user.getLevel()]);
+            user.setLevel(user.getLevel() + 1);
+            levelUp = true;
+        }
+
+        userService.save(user); //DB update
+
+        UserResponseDTO userResponseDTO = new UserResponseDTO(user, levelUp, expTable[user.getLevel()]);
+        //응답 DTO -- 형태 맞춰서 수정 예정
+
+        return ResponseEntity.ok(userResponseDTO);
+    }
+
+    @PostMapping("/visit")
+    @Operation(summary = "유저 명소 방문 이벤트")
+    public ResponseEntity<?> visitLocation(@RequestBody VisitDTO visitDTO){
+        User user = userService.findUserById(visitDTO.getUserId());
+        Location location = locationService.findLocationById(visitDTO.getLocationId());
+
+        if(user == null || location == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저 혹은 명소를 찾을 수 없습니다.");
+        }
+
+        Visit visit = Visit.createVisit(user, location);
+        visit.setUser(user);
+        visit.setLocation(location);
+        visit.setVisitTime(LocalDateTime.now());
+
+        visitService.save(visit);
+
+        return ResponseEntity.ok().build();
     }
 }
