@@ -32,15 +32,4 @@ public class Visit {
 
     private LocalDateTime visitTime;
 
-    public void setUser(User user){ this.user = user; }
-    public void setLocation(Location location){ this.location = location; }
-
-    public void setVisitTime(LocalDateTime visitTime){ this.visitTime = visitTime; }
-    public static Visit createVisit(User user, Location location){
-        Visit visit = new Visit();
-        visit.setUser(user);
-        visit.setLocation(location);
-        visit.setVisitTime(LocalDateTime.now());
-        return visit;
-    }
 }

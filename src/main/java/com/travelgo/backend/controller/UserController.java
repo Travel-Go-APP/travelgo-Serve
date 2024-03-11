@@ -31,9 +31,6 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
-    private final LocationService locationService;
-    private final VisitService visitService;
-
 
     @Autowired
     private int[] expTable;
@@ -175,23 +172,5 @@ public class UserController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
-    @PostMapping("/visit")
-    @Operation(summary = "유저 명소 방문 이벤트")
-    public ResponseEntity<?> visitLocation(@RequestBody VisitDTO visitDTO){
-        User user = userService.findUserById(visitDTO.getUserId());
-        Location location = locationService.findLocationById(visitDTO.getLocationId());
 
-        if(user == null || location == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저 혹은 명소를 찾을 수 없습니다.");
-        }
-
-        Visit visit = Visit.createVisit(user, location);
-        visit.setUser(user);
-        visit.setLocation(location);
-        visit.setVisitTime(LocalDateTime.now());
-
-        visitService.save(visit);
-
-        return ResponseEntity.ok().build();
-    }
 }

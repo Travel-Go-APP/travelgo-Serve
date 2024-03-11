@@ -13,4 +13,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/itemdrop")
 @Tag(name = "ItemDrop", description = "아이템 정보 관련 API")
 public class ItemDropController {
+
 }
