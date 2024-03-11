@@ -31,15 +31,16 @@ public class VisitController {
 
     @PostMapping("/visit")
     @Operation(summary = "유저 명소 방문 이벤트")
-    public ResponseEntity<?> visitLocation(@RequestParam Long userId, @RequestParam Long locationId){
+    public ResponseEntity<?> visitLocation(@RequestParam Long userId, @RequestParam Long locationId) {
         User user = userService.findUserById(userId);
         Location location = locationService.findLocationById(locationId);
 
-        if(user == null || location == null){
+        if (user == null || location == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저 혹은 명소를 찾을 수 없습니다.");
         }
 
-        Visit visit = Visit.builder().user(user)
+        Visit visit = Visit.builder()
+                .user(user)
                 .location(location)
                 .visitTime(LocalDateTime.now())
                 .build();
@@ -50,4 +51,6 @@ public class VisitController {
 
         return ResponseEntity.ok().body(visitDTO);
     }
+
+
 }
