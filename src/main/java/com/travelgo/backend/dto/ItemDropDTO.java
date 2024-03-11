@@ -11,8 +11,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ItemDropDTO {
     private Long dropId;
+
     private Long userId;
-    private Long locationId;
+
     private Long itemId;
+
     private LocalDateTime dropTime;
+
+
 }
