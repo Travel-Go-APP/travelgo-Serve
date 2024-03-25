@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.travelgo.backend.domain.Area;
 import com.travelgo.backend.domain.Location;
+import com.travelgo.backend.dto.ItemDropDTO;
 import com.travelgo.backend.dto.LocationDTO;
 import com.travelgo.backend.dto.Point;
 import com.travelgo.backend.form.LocationForm;
@@ -49,8 +50,8 @@ public class LocationController {
                                           @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
 
         String fileUrl = s3UploadService.upload(image, "images");
-        
-        if(fileUrl == null)
+
+        if (fileUrl == null)
             throw new TravelGoException(GlobalErrorCode.NULL_OBJECT);
 
         Location location = Location.builder()
@@ -76,7 +77,9 @@ public class LocationController {
         Location findLocation = locationService.findLocationById(locationId);
         locationService.changeLocationPoint(findLocation, point);
 
-        return ResponseEntity.ok().body(null);
+        LocationDTO locationDTO = new LocationDTO(findLocation);
+
+        return ResponseEntity.ok().body(locationDTO);
     }
 
     @PatchMapping("/hidden/{locationId}")
@@ -164,7 +167,7 @@ public class LocationController {
         // 응답 JSON 도(area) 이름 추출
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         JsonArray documents = jsonObject.getAsJsonArray("documents");
-        if(documents.size() > 0) {
+        if (documents.size() > 0) {
             JsonObject document = documents.get(0).getAsJsonObject();
             String area = document.getAsJsonObject("address").get("region_1depth_name").getAsString();
             System.out.println("Area: " + area);

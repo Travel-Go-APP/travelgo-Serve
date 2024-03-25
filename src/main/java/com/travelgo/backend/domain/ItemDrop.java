@@ -30,4 +30,8 @@ public class ItemDrop {
     private Item item;
 
     private LocalDateTime dropTime;
+
+    public void changeDropTime(){
+        this.dropTime = LocalDateTime.now();
+    }
 }
