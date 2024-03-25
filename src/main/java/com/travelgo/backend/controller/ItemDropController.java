@@ -60,7 +60,7 @@ public class ItemDropController {
         return ResponseEntity.ok().body(itemDropDTO);
     }
 
-    @DeleteMapping("/{itemDropId}")
+    @DeleteMapping("/{dropId}")
     @Operation(summary = "아이템 획득 정보 삭제")
     public ResponseEntity<?> deleteItemDrop(@PathVariable Long dropId) {
         ItemDrop itemDrop = itemDropService.findItemDropById(dropId);

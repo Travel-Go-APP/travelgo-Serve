@@ -22,7 +22,7 @@ public class UserService {
     public void signUp(SignUpDTO signUpDTO) {
         User user = User.builder()
                 .kakaoId(signUpDTO.getKakaoId())
-                .email(signUpDTO.getEmail())
+                //.email(signUpDTO.getEmail())
                 .nickname(signUpDTO.getNickname())
                 .experience(0)
                 .workCount(0)
@@ -53,9 +53,9 @@ public class UserService {
         return userRepository.findByNickname(nickname);
     }
 
-    public User findUserByEmail(String email) {
+    /*public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
-    }
+    }*/
 
     public boolean hasDuplicateKakaoId(String kakaoId) {
         if (userRepository.findByKakaoId(kakaoId) != null) {
@@ -66,7 +66,7 @@ public class UserService {
 
 
     public boolean hasDuplicateKakaoAccount(String kakaoId, String email) {
-        if ((findUserByKakaoId(kakaoId) != null) && (findUserByEmail(email) != null)) {
+        if ((findUserByKakaoId(kakaoId) != null)/* && (findUserByEmail(email) != null)*/) {
             return true; // 이미 등록된 닉네임
         }
         return false; // 신규 닉네임

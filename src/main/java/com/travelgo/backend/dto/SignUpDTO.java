@@ -12,5 +12,5 @@ public class SignUpDTO {
 
     private String nickname;
 
-    private String email;
+    //private String email;
 }

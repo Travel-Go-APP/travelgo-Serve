@@ -87,14 +87,14 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @GetMapping("/findUserByEmail")
+    /*@GetMapping("/findUserByEmail")
     @Operation(summary = "이메일로 유저 찾기")
     public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
         User user = userService.findUserByEmail(email);
         UserDTO userDto = new UserDTO(user);
 
         return ResponseEntity.ok(userDto);
-    }
+    }*/
 
     @PostMapping("/initial")
     @Operation(summary = "닉네임 설정 전 유저")

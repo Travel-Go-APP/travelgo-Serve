@@ -20,7 +20,7 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(nullable = false, length = 50, unique = true) //카카오 아이디 저장 부분
+    @Column(name = "kakao_id", nullable = false, length = 50, unique = true) //카카오 아이디 저장 부분
     private String kakaoId;
 
     @Column(nullable = false, length = 30, unique = true)
@@ -29,9 +29,9 @@ public class User {
     //@Column(nullable = false,length = 100)
     //private String password;
 
-    @Column(nullable = false, length = 50, unique = true)
+    /*@Column(nullable = false, length = 50, unique = true)
     @Email
-    private String email;
+    private String email;*/
 
     private int experience;
     public void setExperience(int experience){

@@ -18,7 +18,7 @@ public class UserDTO {
     private String kakaoId;
     private String nickname;
     //private String password;
-    private String email;
+    //private String email;
     private int experience;
     private int workCount;
     private int detectionRange;
@@ -30,7 +30,7 @@ public class UserDTO {
         this.userId = user.getUserId();
         this.kakaoId = user.getKakaoId();
         this.nickname = user.getNickname();
-        this.email = user.getEmail();
+        //this.email = user.getEmail();
         this.experience = user.getExperience();
         this.workCount = user.getWorkCount();
         this.detectionRange = user.getDetectionRange();

@@ -12,7 +12,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // 모든 필드를 매개자수로 하는 생성자
 public class VisitDTO {
     private Long visitId;
+    //private Long userId;
+    private String kakaoId;
     private Long userId;
+
     private Long locationId;
     // userId, locationId 같은 경우에는 객체 ID만 이용한다
     // 도메인 객체를 직접 포함시키지 않고, 객체 식별자만 포함한다
@@ -21,6 +24,7 @@ public class VisitDTO {
     public VisitDTO(Visit visit) {
         this.visitId = visit.getVisitId();
         this.userId = visit.getUser().getUserId();
+        this.kakaoId = visit.getUser().getKakaoId();
         this.locationId = visit.getLocation().getLocationId();
         this.visitTime = visit.getVisitTime();
     }
